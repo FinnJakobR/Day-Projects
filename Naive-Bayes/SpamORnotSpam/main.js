@@ -2,7 +2,7 @@ const fs = require("fs");
 var bayes = require('bayes');
 const { EmailAccount } = require("./imap");
 const nodemailer = require('nodemailer');
-const {DashboardSettings, EmailBotSettings, bayesSettings} = require("./settings.js");
+const {DashboardSettings, EmailBotSettings, bayesSettings, EmailSenderSettings} = require("./settings.js");
 
 const express = require('express')
 const app = express()
@@ -121,10 +121,10 @@ async function SendEmail(data){
     }
     const mailOptions = {
         from: {
-            name: "SPAM-AI",
-            address: 'finn.reinhardt2@gmx.de'
+            name: EmailSenderSettings.name,
+            address: EmailSenderSettings.senderAdress
         }, // Sender address
-        to: 'finn.reinhardt@gmx.de', // List of recipients
+        to:  EmailSenderSettings.to, // List of recipients
         subject: data.from + " wants to send you a Email", // Subject line
         html: data.html,
         attachments: attch
