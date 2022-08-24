@@ -3,7 +3,7 @@ smaller projects, where I try to deepen newly learned things and thereby create 
 
 ## Projekts 
 1. Naive-Bayes-Spam or !Spam Email Bot Projekt [Link To Project](https://link-url-here.org)
-2. Google Home Serverips Command [Link To Project](https://link-url-here.org)
+2. Google Home Serverips Command [Link To Project](https://github.com/FinnJakobR/Day-Projects/tree/main/GoogleHome/ServerIpsCommand)
 
 
 ## What ive learned
