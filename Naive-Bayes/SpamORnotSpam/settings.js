@@ -24,5 +24,12 @@ const bayesSettings = {
     path2: "",
 }
 
+const EmailSenderSettings = {
+    name: "",
+    senderAdress: "",
+    to: ""
+}
 
-module.exports = {EmailAccountSettings, bayesSettings, EmailBotSettings, DashboardSettings};
+
+
+module.exports = {EmailAccountSettings, bayesSettings, EmailBotSettings, DashboardSettings,EmailSenderSettings};
