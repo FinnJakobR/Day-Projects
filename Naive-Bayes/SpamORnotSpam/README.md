@@ -44,3 +44,12 @@ Add your ```Email-Account-Data```, after that your are ready to go :)
 
 ## Dashboard
 
+![Dashboard](https://github.com/FinnJakobR/Day-Projects/blob/main/Naive-Bayes/SpamORnotSpam/Dashboard.png?raw=true)
+
+## What i learned
+
+- [x] How to Use Naive Bayes
+- [x] What is Text Classification
+- [x] Basics of SMTP and IMAP
+- [x] Basic of Natural Language Processing 
+
