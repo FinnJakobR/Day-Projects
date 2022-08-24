@@ -1,1 +1,1 @@
-#SpamAI Build in Node js
+# SpamAI in Node js
