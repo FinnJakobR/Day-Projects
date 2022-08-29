@@ -27,3 +27,42 @@ Responses usually consist of a status code and a body. The status code is a good
 HTTP/1.1 400 Bad Request
 ```
 This is a Sample HTTP Fail Response usally the Response has a body, where for example the error is explained in more detail
+
+## How to Use
+The program works with a callback function, which is always executed when a request is passed 
+```c
+void CALLBACK(char response[MAXLINE+1], int type, char* Path, int connection, u_int8_t buff[MAXLINE+1]){}
+```
+1. The response parameter passes the HTTP response with the header and with further data, for Debug Print you can use ``DebugRequest(request)``
+2. The Type parmert ist to identify the Type of the HTTP request.
+
+```c
+      if(strstr(curLine, "GET") != NULL) return 0;
+
+      if(strstr(curLine, "POST") != NULL) return 1;
+
+      if(strstr(curLine, "HEAD") != NULL) return 2;
+
+      if(strstr(curLine, "PUT") != NULL) return 3;
+
+      if(strstr(curLine, "DELETE") != NULL) return 4;
+
+      if(strstr(curLine, "CONNECT") != NULL) return 5;
+
+      if(strstr(curLine, "TRACE") != NULL) return 6;
+     
+      if(strstr(curLine, "PATCH") != NULL) return 7;
+```
+3. The Path Paramter passes the rout of the HTTP Request
+4. Connection and Buff are only to Send Response
+
+### Send Response 
+```c
+void SendResponse(u_int8_t buff[MAXLINE+1], char* Response, int connectionNumber){}
+```
+Example: 
+```c
+SendResponse(buff, "HTTP/1.1 200 OK\n\r\n\r\nPATH NOT USED", connection);
+```
+
+
