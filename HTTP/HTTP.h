@@ -19,9 +19,10 @@
 #define MAXLINE 4600
 
 struct sockaddr_in InitServer(int PORT);
-void StartServer(struct sockaddr_in server, int PORT, void (*GET_CALLBACK)(char response[MAXLINE -1], char* Path, int connfd, u_int8_t buff[MAXLINE+1]), void (*POST_CALLBACK)(char response[MAXLINE -1], char* Path, int connfd, u_int8_t buffbuff[MAXLINE+1]));
+void StartServer(struct sockaddr_in server, int PORT, void (*CALLBACK)(char response[MAXLINE+1], int type, char* Path, int connfd, u_int8_t buff[MAXLINE+1]));
 int GetRequestType(char request[MAXLINE + 1]);
 char* GetPath(char request[MAXLINE + 1]);
 void SendResponse(u_int8_t buff[MAXLINE+1], char* Response, int connectionNumber);
+void DebugRequest(char request[MAXLINE + 1]);
 
 #endif // FOO_H_

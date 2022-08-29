@@ -2,8 +2,10 @@
 
 
 
+//TODO: Change to one Callback with type parameter
 void SendResponse(u_int8_t buff[MAXLINE+1], char* Response, int connectionNumber){
-     snprintf((char*)buff, MAXLINE+1, "HTTP/1.1 200 OK\n\r\n\r\nHELLO");
+     
+     snprintf((char*)buff, MAXLINE+1, "%s",Response);
 
      //"HTTP/1.1 200 OK\n\r\n\r\nHELLO"
 
@@ -26,6 +28,19 @@ char* GetPath(char request[MAXLINE + 1]){
    return(path);
 };
 
+void DebugRequest(char request[MAXLINE +1]){
+        char * curLine = request;
+   while(curLine)
+   {
+      char * nextLine = strchr(curLine, '\n');
+      if (nextLine) *nextLine = '\0';  // temporarily terminate the current line
+       printf("%s\n", curLine);
+
+      if (nextLine) *nextLine = '\n';  // then restore newline-char, just to be tidy    
+      curLine = nextLine ? (nextLine+1) : NULL;
+   }
+}
+
 
 int GetRequestType(char request[MAXLINE +1]){
      char * curLine = request;
@@ -36,11 +51,19 @@ int GetRequestType(char request[MAXLINE +1]){
     
       if(strstr(curLine, "GET") != NULL) return 0;
 
-      //printf("%s\n",curLine);
-      //printf("GET / HTTP/1.1\n");
-      //printf("%d\n\n", strcmp(curLine, "GET / HTTP/1.1\0"));
-
       if(strstr(curLine, "POST") != NULL) return 1;
+
+      if(strstr(curLine, "HEAD") != NULL) return 2;
+
+      if(strstr(curLine, "PUT") != NULL) return 3;
+
+      if(strstr(curLine, "DELETE") != NULL) return 4;
+
+      if(strstr(curLine, "CONNECT") != NULL) return 5;
+
+      if(strstr(curLine, "TRACE") != NULL) return 6;
+     
+      if(strstr(curLine, "PATCH") != NULL) return 7;
 
       if (nextLine) *nextLine = '\n';  // then restore newline-char, just to be tidy    
       curLine = nextLine ? (nextLine+1) : NULL;
@@ -58,7 +81,7 @@ struct sockaddr_in InitServer(int PORT){
      return serveraddr;
 };
 
-void StartServer(struct sockaddr_in server, int PORT, void (*GET_CALLBACK)(char response[MAXLINE -1], char* Path, int connection, u_int8_t buff[MAXLINE+1]),void (*POST_CALLBACK)(char response[MAXLINE -1], char* Path, int connection, u_int8_t buff[MAXLINE+1])){
+void StartServer(struct sockaddr_in server, int PORT, void (*CALLBACK)(char response[MAXLINE+1], int type, char* Path, int connection, u_int8_t buff[MAXLINE+1])){
       int listenfd, connfd, n;
     u_int8_t buff[MAXLINE +1];
     char revline[MAXLINE +1];
@@ -81,7 +104,7 @@ void StartServer(struct sockaddr_in server, int PORT, void (*GET_CALLBACK)(char 
    while(1){
       struct sockaddr_in addr;
       socklen_t addr_len;
-      printf("Waiting for connection");
+      printf("Waiting for connection\n");
 
       fflush(stdout);
 
@@ -103,16 +126,23 @@ void StartServer(struct sockaddr_in server, int PORT, void (*GET_CALLBACK)(char 
 
       }
 
+       char ResponseCopy[MAXLINE+1];
+
+        strcpy(ResponseCopy, revline);
+
     int type = GetRequestType(revline);
     char* Line = GetPath(revline);
 
-     if(type == 0){
-          printf("GET");
-       GET_CALLBACK(revline, Line, connfd, buff);
+    strcpy(revline,ResponseCopy);
+
+
+     if(type != -1){
+
+       CALLBACK(revline, type, Line, connfd, buff); //TODO: char[] -> char* 
     }
 
-     if(type == 1){
-     POST_CALLBACK(revline, Line, connfd, buff);
+    if(type == -1){
+     SendResponse(buff, "HTTP/1.1 405 Method Not Allowed\n\r\n\r\nTHIS TYPE IS NOT ALLOWED", connfd);;
     }
 
        memset(revline, 0, MAXLINE);
