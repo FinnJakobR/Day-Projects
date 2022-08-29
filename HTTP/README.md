@@ -64,5 +64,12 @@ Example:
 ```c
 SendResponse(buff, "HTTP/1.1 200 OK\n\r\n\r\nPATH NOT USED", connection);
 ```
-
+## What ive Learned
+- [x] What is HTTP
+- [x] How looks a HTTP Request
+- [x] What is a HTTP Header
+- [x] HOW TCP Works
+- [x] Whats HTTP Statuscode
+- [x] How Socket Work
+- [x] Building a webserver in C
 
