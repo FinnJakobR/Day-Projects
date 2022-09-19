@@ -6,6 +6,7 @@ smaller projects, where I try to deepen newly learned things and thereby create 
 2. Google Home Serverips Command [Link To Project](https://github.com/FinnJakobR/Day-Projects/tree/main/GoogleHome/ServerIpsCommand)
 3. HTTP Server in c [Link To Project](https://github.com/FinnJakobR/Day-Projects/tree/main/HTTP)
 3. Color-Predictor in Java [Link To Project](https://github.com/FinnJakobR/Day-Projects/tree/main/Color-Predictor-ki)
+4. CSGO Telegram-Bot [Link To Project](https://github.com/FinnJakobR/Day-Projects/tree/main/CSGO-Telegram-Bot)
 
 ## What ive learned
 
