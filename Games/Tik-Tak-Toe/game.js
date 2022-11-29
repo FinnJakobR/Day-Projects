@@ -1,12 +1,13 @@
+import {Cpu} from './cpu.js';
 
 class TikTakToe {
-    constructor(height, width, color) {
+    constructor(height, width, color, isCpu) {
         this.state = "init";
         this.board = [[],[],[]];
         this.height = height;
         this.width = width;
         this.color = color;
-        this.currentPlayer = 0;
+        this.currentPlayer = 1;
     }
 
     build(){
@@ -48,22 +49,29 @@ class TikTakToe {
 
         this.state = "Game Started";
 
-        var symbol = "X";
+        var symbol = "O";
+
+        if(this.currentPlayer === 1){
+            const bot = new Cpu(this.board);
+            const perfectIndex = bot.play(1);
+            this.doMoveForBot(perfectIndex.x, perfectIndex.y);
+            this.currentPlayer = 0;
+        }
+
          const fields = document.getElementsByClassName("field");
 
          for (let field = 0; field < fields.length; field++) {
             fields[field].addEventListener("click",()=>{
-
                 if(this.state === "Game has Ended") {
                     this.clearBoard();
                     this.run();
 
-                    return symbol = "O";
+                    return;
                 };
+
 
                 const BoardIndex = this.getIndex(field);
 
-                console.log(BoardIndex);
 
                 if(this.board[BoardIndex.y][BoardIndex.x] > -1)  return;
 
@@ -74,11 +82,18 @@ class TikTakToe {
 
             fields[field].innerHTML = symbol;
 
-            symbol = this.currentPlayer == 0 ? "O" : "X";
-
             this.currentPlayer == 0 ? this.currentPlayer = 1 : this.currentPlayer = 0;
 
-            console.log(this.currentPlayer);
+            if(this.currentPlayer == 0) symbol = "X";
+            else symbol = "O"
+
+            if(this.currentPlayer === 1){
+                    const bot = new Cpu(this.board);
+                const perfectIndex = bot.play(1);
+                console.log(perfectIndex);
+                this.doMoveForBot(perfectIndex.x, perfectIndex.y);
+                this.currentPlayer = 0;
+            }
 
             const iswinner = this.winner();
 
@@ -93,11 +108,29 @@ class TikTakToe {
 
                this.state = "Game has Ended";
 
+               setTimeout(() => {
+                window.location.reload();
+               }, 1000);
+
                return;
 
             }
             });
          }
+    }
+
+    doMoveForBot(x,y){
+        console.log(x,y);
+        this.board[x][y] = 1;
+        const index = this.calcBackIndex(x,y);
+       document.getElementsByClassName("field")[index].innerHTML = "X";
+       return;
+    }
+
+    calcBackIndex(x,y){
+        const index = (x * 3) + y;
+
+        return index;
     }
 
 
@@ -197,12 +230,17 @@ class TikTakToe {
 
 
 function main (){
-    const game = new TikTakToe(600, 600, "white");
+    const game = new TikTakToe(800, 800, "white", true);
 
     game.build();
 
     game.run();
 
+    const bot = new Cpu([[1,0,1], [-1,0,-1], [-1,-1,-1]]);
+
+    console.log(bot.play(1))
+
+    console.log(bot.avaibleMoves())
     return; 
 }
 
