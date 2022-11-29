@@ -20,7 +20,6 @@ class TikTakToe {
 
         const fieldWidth = (this.width / 3) + "px"; 
         html_board.style.gridTemplateColumns = `repeat(auto-fill, ${fieldWidth})`
-        console.log(`repeat(auto-fill, ${fieldWidth})`);
         html_board.className = "board";
 
         for (let field = 0; field < 9; field++) {
@@ -44,8 +43,6 @@ class TikTakToe {
     }
 
     run(){
-
-        console.log(this.currentPlayer);
 
         this.state = "Game Started";
 
@@ -100,7 +97,7 @@ class TikTakToe {
             if(iswinner.winner) {
                 const winnerScreen = document.createElement("div");
 
-                winnerScreen.innerText = `Game has Ended, the winner is player ${iswinner.player}`;
+              winnerScreen.innerText = `Game has Ended, the winner is player ${iswinner.player}`;
 
                 winnerScreen.className = "winnerScreen";
 
@@ -236,11 +233,6 @@ function main (){
 
     game.run();
 
-    const bot = new Cpu([[1,0,1], [-1,0,-1], [-1,-1,-1]]);
-
-    console.log(bot.play(1))
-
-    console.log(bot.avaibleMoves())
     return; 
 }
 

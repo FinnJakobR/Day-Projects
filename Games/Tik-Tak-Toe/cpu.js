@@ -100,7 +100,7 @@ export class Cpu {
     }
 
 
-    play(player){
+    play(){
 
         var maxScore = -Infinity;
 
@@ -111,7 +111,7 @@ export class Cpu {
         for (let index = 0; index < Moves.length; index++) {
             this.doMove(Moves[index].x, Moves[index].y, 1);
             const newBot = new Cpu(this.playState);
-            const newPossibleGame = newBot.minmax(0, 0);
+            const newPossibleGame = newBot.minmax(0, 0, -Infinity, Infinity);
             this.undoMove(Moves[index].x, Moves[index].y);
             if(newPossibleGame > maxScore){
                 maxScore = newPossibleGame;
@@ -121,7 +121,7 @@ export class Cpu {
         return perfectScore;
     }
 
-    minmax(depth, player){
+    minmax(depth, player, alpha, beta){
         var isMax = false;
         if(player == 1) isMax = true;
 
@@ -130,7 +130,6 @@ export class Cpu {
         if(isEnded.winner === true) return this.score(isEnded.player);
 
         if(isMax) {
-           var maxScore = -Infinity;
             const Moves = this.avaibleMoves();
 
             for (let index = 0; index < Moves.length; index++) {
@@ -138,25 +137,25 @@ export class Cpu {
                 const newBot = new Cpu(this.playState);
                 var newPlayer = 0;
                 if(!isMax) newPlayer = 1; 
-                const newPossibleGame = newBot.minmax(depth++, newPlayer);
-                maxScore = Math.max(maxScore, newPossibleGame);
+                const newPossibleGame = newBot.minmax(depth++, newPlayer, alpha, beta);
+                alpha = Math.max(alpha, newPossibleGame);
                 this.undoMove(Moves[index].x, Moves[index].y);
+                if(alpha >= beta) break;
             }
-            return maxScore;
+            return alpha;
         }else{
-            var minScore = Infinity;
             const Moves = this.avaibleMoves();
             for (let index = 0; index < Moves.length; index++) {
                 this.doMove(Moves[index].x, Moves[index].y, 0);
                 const newBot = new Cpu(this.playState);
                 var newPlayer = 0;
                 if(!isMax) newPlayer = 1; 
-                const newPossibleGame = newBot.minmax(depth++, newPlayer);
-                minScore = Math.min(minScore, newPossibleGame);
+                const newPossibleGame = newBot.minmax(depth++, newPlayer, alpha, beta);
+                beta = Math.min(beta, newPossibleGame);
                 this.undoMove(Moves[index].x, Moves[index].y);
+                if (beta <= alpha) break;
             }
-
-            return minScore;
+            return beta;
         }
     }
 }
