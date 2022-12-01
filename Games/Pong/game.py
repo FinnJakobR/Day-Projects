@@ -4,7 +4,6 @@ from Level import *
 from score import * 
 from player import * 
 from ball import *
-from plyer import notification
 
 class Game :
    def __init__(self):
@@ -13,16 +12,12 @@ class Game :
     pygame.display.set_caption("PONG!")
     self.clock = pygame.time.Clock()
 
-    self.player1 = Player(1,"REAL")
-    self.player2 = Player(2, "REAL")
+    self.player1 = Player(1,"CPU")
+    self.player2 = Player(2, "CPU")
     self.player1Score = Score("0",1)
     self.player2Score = Score("0", 2)
     self.map = Level()
     self.ball = Ball()
-
-    #self.icon  = pygame.image.load("./icon.png")
-
-    #pygame.display.set_icon(self.icon)
 
 
    def run(self):
@@ -43,6 +38,9 @@ class Game :
 
         self.player1.listenForKeys()
         self.player2.listenForKeys()
+
+        self.player1.playCpu(self.ball.currentPosY, self.ball.currentPosX)
+        self.player2.playCpu(self.ball.currentPosY, self.ball.currentPosX)
 
         self.map.createMap()
 

@@ -1,5 +1,6 @@
 import pygame
 from settings.settings import *
+import random
 
 class Player :
     def __init__(self,player, playerType):
@@ -87,6 +88,22 @@ class Player :
                 
             if(player2GoDown and self.player == 2):
                 self.GoDown()
+    
+
+    def playCpu(self,ballY, ballX):
+        randomize = random.randint(1,3)
+        if(self.type == "CPU"):
+            if(self.player == 2 and ballX > WIDTH / 2 and randomize == 2):
+                self.currentPosY = ballY
+                self.renderPlayer()
+
+            if(self.player == 1 and ballX < WIDTH / 2 and randomize == 2):
+                self.currentPosY = ballY
+                self.renderPlayer()
+        return 
+
+    def playAI(self):
+        pass
 
 
     def resetPlayer(self):
