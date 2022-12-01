@@ -33,3 +33,8 @@ PLAYER_TWO = "CPU_HARD"
 BALL_COLOR = (255,255,255)
 RADIUS = 5
 BALL_SPEED = 0.1
+
+
+#AI 
+
+SAVE_PATH = "./Games/Pong/screenShots/"

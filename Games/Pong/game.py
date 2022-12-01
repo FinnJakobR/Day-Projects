@@ -4,6 +4,7 @@ from Level import *
 from score import * 
 from player import * 
 from ball import *
+from AI import *  
 
 class Game :
    def __init__(self):
@@ -11,6 +12,11 @@ class Game :
     self.screen = pygame.display.set_mode((WIDTH,HEIGHT))
     pygame.display.set_caption("PONG!")
     self.clock = pygame.time.Clock()
+    self.AI = AI()
+
+    self.icon = pygame.image.load("./Games/Pong/assets/icon.png") 
+
+    pygame.display.set_icon(self.icon)
 
     self.player1 = Player(1,PLAYER_ONE)
     self.player2 = Player(2, PLAYER_TWO)
@@ -18,10 +24,11 @@ class Game :
     self.player2Score = Score("0", 2)
     self.map = Level()
     self.ball = Ball()
+    self.AI.startScreenshooting()
 
 
    def run(self):
-    
+
     while True:
         for event in pygame.event.get():
             if(event.type == pygame.QUIT):
@@ -73,7 +80,7 @@ class Game :
         if(currentPlayer2Score > WINNING_SCORE -1):
             self.newRound()
 
-
+        
         pygame.display.update()
 
 
