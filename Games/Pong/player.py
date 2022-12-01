@@ -91,15 +91,34 @@ class Player :
     
 
     def playCpu(self,ballY, ballX):
-        randomize = random.randint(1,3)
-        if(self.type == "CPU"):
-            if(self.player == 2 and ballX > WIDTH / 2 and randomize == 2):
+        randomize = random.randint(1,10)
+        if(self.type == "CPU_HARD" or self.type == "CPU"):
+            if(self.player == 2 and ballX > WIDTH / 2 and randomize <= 5):
                 self.currentPosY = ballY
                 self.renderPlayer()
 
-            if(self.player == 1 and ballX < WIDTH / 2 and randomize == 2):
+            if(self.player == 1 and ballX < WIDTH / 2 and randomize <= 5):
                 self.currentPosY = ballY
                 self.renderPlayer()
+        
+        if(self.type == "CPU_MASTER"):
+            if(self.player == 2 and ballX > WIDTH / 2):
+                self.currentPosY = ballY
+                self.renderPlayer()
+
+            if(self.player == 1 and ballX < WIDTH / 2):
+                self.currentPosY = ballY
+                self.renderPlayer()
+
+        if(self.type == "CPU_EASY"):
+            randomize = random.randint(1,2000)
+            if(self.player == 2 and ballX > (WIDTH / 2) and randomize <= 5):
+                    self.currentPosY = ballY
+                    self.renderPlayer()
+
+            if(self.player == 1 and ballX < WIDTH / 2 and  randomize <= 5):
+                    self.currentPosY = ballY
+                    self.renderPlayer() 
         return 
 
     def playAI(self):

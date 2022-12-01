@@ -12,8 +12,8 @@ class Game :
     pygame.display.set_caption("PONG!")
     self.clock = pygame.time.Clock()
 
-    self.player1 = Player(1,"CPU")
-    self.player2 = Player(2, "CPU")
+    self.player1 = Player(1,PLAYER_ONE)
+    self.player2 = Player(2, PLAYER_TWO)
     self.player1Score = Score("0",1)
     self.player2Score = Score("0", 2)
     self.map = Level()
