@@ -1,0 +1,59 @@
+body {
+    margin: 0;
+    background-color: #454545;
+}
+
+.field {
+
+    padding: 0;
+    margin: auto;
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+}
+.titleWrapper {
+    width: 100vw;
+    height: 100px;
+    font-size:xx-large;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.joinRoom {
+    width: 100vw;
+    height: 100px;
+    font-size:large;
+    display: flex;
+    align-items:center;
+    gap: 10px;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.createRoom {
+    width: 100vw;
+    height: 40px;
+    font-size:large;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.SinglePlayer{
+    width: 100vw;
+    height: 40px;
+    margin-top: 40px;
+    font-size:large;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
