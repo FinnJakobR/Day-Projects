@@ -41,6 +41,19 @@ const lev = (a,b) =>{
     return matrix[n - 1][m - 1];
 }
 
+const getMin = (str1, arr) =>{
+    var currentMin = {dst: lev(str1,arr[0]), job:arr[0]};
+    for (let distance = 0; distance < arr.length; distance++) {
+        if(str1 == arr[distance] || arr[distance].includes(str1)) return {dst: 0, job: arr[distance]};
+        const current_distance = {dst: lev(str1,arr[distance]), job:arr[distance]}
+        currentMin = Math.min(current_distance.dst,currentMin.dst) != currentMin.dst ? current_distance : currentMin;
+
+        if(currentMin == 0) return currentMin;
+    }
+
+    return currentMin;
+}
+
 
 const getStrLength = (str) =>{
     return str.length;
