@@ -15,6 +15,8 @@
 #include <sys/ioctl.h>
 #include <netdb.h>
 
+///TODO: ADD MALLOC WRAPPER UND GEBE EIN 500 ERROR WENN ES EIN MEMORY ERROR GIBT!
+
 #define MAX_HEADER 50
 #define MAXLINE 5000
 #define ERROR404 "HTTP/1.1 404 Not Found\r\nContent-Type: text/html\r\nContent-Length: 0\r\n\r\n"
@@ -108,10 +110,7 @@ typedef struct {
 
     request_version version;
 
-    int first_line_length;
-
     int lex_error; //zb. wenn eine Request eine falsche Syntax hat
-    int internal_error; // Zb. wenn Malloc fehlschlägt  
     rules_error rule_error;
 
 }request;
