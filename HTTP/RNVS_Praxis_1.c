@@ -1,4 +1,3 @@
-
 #include <sys/socket.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -22,6 +21,7 @@
 #define ERROR404 "HTTP/1.1 404 Not Found\r\nContent-Type: text/html\r\nContent-Length: 0\r\n\r\n"
 #define ERROR501 "HTTP/1.1 501 Not Implemented\r\nContent-Type: text/html\r\nContent-Length: 0\r\n\r\n"
 #define ERROR400 "HTTP/1.1 400 Bad Request\r\nContent-Type: text/html\r\nContent-Length: 0\r\n\r\n"
+#define SUCESS200 "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: 0\r\n\r\n"
 
 typedef enum {
     REQUEST_GET = 0,
@@ -294,7 +294,9 @@ void start_server(struct sockaddr_in server){
     while ((n = read(connfd, revline, MAXLINE - 1)) > 0) {
         
             fprintf(stdout, "%s", revline);
-             
+
+
+                     /*ERROR HANDLING*/
              if(!tokenize_request(req,revline)){
                 if(req->rule_error == REQUEST_EMPTY_ERROR){
                      write(connfd, "", strlen(""));
@@ -312,51 +314,69 @@ void start_server(struct sockaddr_in server){
                 }
              };
 
+                    /*----------------------*/
+
              if(req->url.type == STATIC_URL){
                 if(memcmp(req->url.start, "/foo", req->url.end - req->url.start) == 0){
+                    
                     char* res = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: 3\r\n\r\nFoo";
                     write(connfd, res, strlen(res));
-                }else if(memcmp(req->url.start, "/bar", req->url.end - req->url.start) == 0){
-                    char* res = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: 3\r\n\r\nBar";
-                    write(connfd, res, strlen(res));
-                }else if (memcmp(req->url.start, "/baz", req->url.end - req->url.start) == 0){
-                    char* res = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: 3\r\n\r\nBaz";
-                    write(connfd, res, strlen(res));
-                }else {
-                    write(connfd, ERROR404, strlen(ERROR404)); 
+                }
+                    else if(memcmp(req->url.start, "/bar", req->url.end - req->url.start) == 0){
+                        char* res = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: 3\r\n\r\nBar";
+                        write(connfd, res, strlen(res));
+                }
+                    else if (memcmp(req->url.start, "/baz", req->url.end - req->url.start) == 0){
+                        char* res = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: 3\r\n\r\nBaz";
+                        write(connfd, res, strlen(res));
+                }
+                    else {
+                        
+                        write(connfd, ERROR404, strlen(ERROR404)); 
                 }
              }
 
              if(req->url.type == DYNMAMIC_URL){
+                
                 if(req->type == REQUEST_PUT){
                
-                    removeElementByUrl(req->url.start);
-                    newElement(req->url.start, req->url.end, req->body.start, req->body.end);
-                    char* res = "HTTP/1.1 201 Create resource\r\nContent-Type: text/html\r\nContent-Length: 0\r\n\r\n";
-                    write(connfd, res, strlen(res));
-               
-                }else if(req->type == REQUEST_DELETE){
-                     
-                     removeElementByUrl(req->url.start);
-                       char* res = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: 0\r\n\r\n";
+                        removeElementByUrl(req->url.start);
+                        newElement(req->url.start, req->url.end, req->body.start, req->body.end);
+                        char* res = "HTTP/1.1 201 Create resource\r\nContent-Type: text/html\r\nContent-Length: 0\r\n\r\n";
                         write(connfd, res, strlen(res));
-                }else if(req->type == REQUEST_GET){
-                    dynamic_url_node* n =  findElementByUrl(req->url.start);
-                    if(n){
-                        char* res = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: %d\r\n\r\n%.*s";
-                        int dataLength = n->data.end - n->data.start;
-                        int contentLengthSize = snprintf(NULL, 0, "%d", dataLength); // Länge der Zahl für Content-Length
-                        int staticPartLength = strlen(res) -6; // Abzug der Länge der Platzhalter %d und %.*s
+               
+                }
+                
+                    else if(req->type == REQUEST_DELETE){
+                     
+                        removeElementByUrl(req->url.start);
+                        write(connfd, SUCESS200, strlen(SUCESS200));
 
-                        int totalLength = staticPartLength + contentLengthSize + dataLength;
-                        char* buff = malloc(sizeof(char) * (totalLength + 1));
-                        snprintf(buff,totalLength + 1,  res, dataLength, dataLength, n->data.start);
-                        printf("%s", buff);
-                        write(connfd, buff, strlen(buff));
-                        free(buff);
+                }
+                    else if(req->type == REQUEST_GET){
+                        
+                        dynamic_url_node* n =  findElementByUrl(req->url.start);
+                        
+                        if(n){
+                            
+                            char* res = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: %d\r\n\r\n%.*s";
+                            
+                            int dataLength = n->data.end - n->data.start;
+                            int contentLengthSize = snprintf(NULL, 0, "%d", dataLength); // Länge der Zahl für Content-Length
+                            int staticPartLength = strlen(res) -6; // Abzug der Länge der Platzhalter %d und %.*s
 
-                    }else {
-                         write(connfd, ERROR404, strlen(ERROR404));
+                            int totalLength = staticPartLength + contentLengthSize + dataLength;
+                            char* buff = malloc(sizeof(char) * (totalLength + 1));
+                            
+                            snprintf(buff,totalLength + 1,  res, dataLength, dataLength, n->data.start);
+                            printf("%s", buff);
+                            write(connfd, buff, strlen(buff));
+                            free(buff);
+
+                    }
+                        else {
+                         
+                            write(connfd, ERROR404, strlen(ERROR404));
                     }
                 }
              }
