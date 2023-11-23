@@ -42,7 +42,8 @@ typedef enum {
     REQUEST_GET_AND_CONTENTLENGTH_ERROR,
     REQUEST_EMPTY_ERROR,
     REQUEST_TYPE_AND_CONTENTLENGTH_ERROR,
-    UNIVALID_REQUEST_ERROR,
+    UNVALID_REQUEST_ERROR,
+    UNVALID_REQUEST_LINE_ERROR,
 } rules_error;
 
 typedef enum {
@@ -103,15 +104,45 @@ typedef struct {
 
 
 
-/*Functions Declarations*/
-dynamic_url_node* HEAD = NULL;
+/*Server functions Declarations*/
 struct sockaddr_in create_server_instance(char* adresse, int PORT);
 void start_server(struct sockaddr_in);
-int timeout(int s, char* buffer, int len, int timeout);
-int tokenize_request(request* req, char* req_source);
-void* HTTP_malloc(request* req, size_t size);
-int HTTP_free(request* req);
 /*----------------------*/
+
+/*Functions to parse HTML Request*/
+int tokenize_request(request* req, char* req_source);
+int tokenize_request_line(request* req);
+int is_end(request* req);
+int eat_whitespace(request* req);
+int endOfLine(request* req);
+int applyContentLengthRule(request* req, request_header* contentLength);
+int applyRequestRule(request* req, request_type type, request_header* contentLength);
+request_header* findHeaderByName(request* req, char* name);
+/*----------------------*/
+
+/*Database functions declarations*/
+dynamic_url_node* HEAD = NULL;
+void newElement(char* url_start, char* url_end, char* data_start, char* data_end);
+void removeElementByUrl(char* url_start);
+dynamic_url_node* findElementByUrl(char* url);
+/*----------------------*/
+
+
+
+
+/*Main functions init server an start server with cli args*/
+int main(int argc, char *argv[] ){
+    
+    char* adresse = argv[1];
+    int port = atoi(argv[2]);
+      
+    struct sockaddr_in server = create_server_instance(adresse, port);
+    
+
+    start_server(server);
+    return 0;
+};
+
 
 void newElement(char* url_start, char* url_end, char* data_start, char* data_end){
     dynamic_url_node * newElement = malloc(sizeof(dynamic_url_node));
@@ -147,31 +178,6 @@ void newElement(char* url_start, char* url_end, char* data_start, char* data_end
 
     return;
 };
-
-char* create_substring(char* start, char* end) {
-
-    if (start == NULL || end == NULL || end < start) {
-        return NULL;
-    }
-
-   
-    size_t length = end - start;
-
-   
-    char* substring = (char*)malloc(length + 1);
-
-    
-    if (substring == NULL) {
-        return NULL;
-    }
-
-   
-    strncpy(substring, start, length);
-
-    substring[length] = '\0';
-
-    return substring;
-}
 
 void removeElementByUrl(char* url_start){
     dynamic_url_node* currentNode = HEAD;
@@ -219,21 +225,6 @@ void removeElementByUrl(char* url_start){
     return NULL;
     
  }
-
-
-
-//TODO ADD IP AND PORT ARGV SUPPORT
-int main(int argc, char *argv[] ){
-    
-    char* adresse = argv[1];
-    int port = atoi(argv[2]);
-      
-    struct sockaddr_in server = create_server_instance(adresse, port);
-    
-
-    start_server(server);
-    return 0;
-};
 
 
 struct sockaddr_in create_server_instance(char* adresse, int PORT){
@@ -301,7 +292,7 @@ void start_server(struct sockaddr_in server){
                     write(connfd, ERROR501, strlen(ERROR501));
                 }else if(req->type == UNSUPPORTED_REQUEST || ((req->type == REQUEST_PUT || req->type == REQUEST_DELETE) && req->url.type != DYNMAMIC_URL)){
                        write(connfd, ERROR501, strlen(ERROR501));
-                }else if(req->rule_error == UNIVALID_REQUEST_ERROR){
+                }else if(req->rule_error == UNVALID_REQUEST_ERROR || req->rule_error == UNVALID_REQUEST_LINE_ERROR){
                     write(connfd, ERROR400, strlen(ERROR400));
                 }else if(req->rule_error == REQUEST_TYPE_AND_CONTENTLENGTH_ERROR){
                       write(connfd, ERROR400, strlen(ERROR400));
@@ -382,20 +373,7 @@ void start_server(struct sockaddr_in server){
 
 //PARSE HTTP_REQUEST
 
-
-void* HTTP_MALLOC(request* req, size_t size){
-    void* mem = malloc(size);
-
-    if(!mem){
-        req->internal_error = 1;
-        printf("INTERNAL ERROR IN MALLOC!");
-        return NULL;
-    };
-
-    return mem;
-};
-
-    int eat_whitespace(request* req){
+   int eat_whitespace(request* req){
         while (*(req->source.current_char) == ' '){
             req->source.current_char++;
         }
@@ -423,7 +401,7 @@ int tokenize_request_line(request* req){
 
         if(endOfLine(req)){
             req->lex_error = 1;
-            req->rule_error = UNIVALID_REQUEST_ERROR;
+            req->rule_error = UNVALID_REQUEST_LINE_ERROR;
             return 0;
         }
     };
@@ -454,7 +432,7 @@ int tokenize_request_line(request* req){
 
         if(endOfLine(req)){
             req->lex_error = 1;
-            req->rule_error = UNIVALID_REQUEST_ERROR;
+            req->rule_error = UNVALID_REQUEST_LINE_ERROR;
             return 0;
         }
     };
@@ -629,7 +607,7 @@ int tokenize_request(request* req, char* req_source){
 
             req->header[(currentHeaderIndex)] = *newHeader;
 
-            printf("NEW HEADER --> %.*s:%.*s\n", (int)(req->header[currentHeaderIndex].option.end - req->header[currentHeaderIndex].option.start),req->header[currentHeaderIndex].option.start,(int)(req->header[currentHeaderIndex].value.end - req->header[currentHeaderIndex].value.start), req->header[currentHeaderIndex].value.start);
+            //printf("NEW HEADER --> %.*s:%.*s\n", (int)(req->header[currentHeaderIndex].option.end - req->header[currentHeaderIndex].option.start),req->header[currentHeaderIndex].option.start,(int)(req->header[currentHeaderIndex].value.end - req->header[currentHeaderIndex].value.start), req->header[currentHeaderIndex].value.start);
 
             free(newHeader);
 
