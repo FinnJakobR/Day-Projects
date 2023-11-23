@@ -21,7 +21,7 @@
 #define ERROR404 "HTTP/1.1 404 Not Found\r\nContent-Type: text/html\r\nContent-Length: 0\r\n\r\n"
 #define ERROR501 "HTTP/1.1 501 Not Implemented\r\nContent-Type: text/html\r\nContent-Length: 0\r\n\r\n"
 #define ERROR400 "HTTP/1.1 400 Bad Request\r\nContent-Type: text/html\r\nContent-Length: 0\r\n\r\n"
-#define SUCESS200 "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: 0\r\n\r\n"
+#define SUCCESS200 "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: 0\r\n\r\n"
 
 typedef enum {
     REQUEST_GET = 0,
@@ -275,9 +275,8 @@ void start_server(struct sockaddr_in server){
     }
 
     while(1){
-      //struct sockaddr_in addr;
-      //socklen_t addr_len;
-      printf("Waiting for connection\n");
+        
+      //printf("Waiting for connection\n");
       memset(revline, 0, MAXLINE);
 
       fflush(stdout);
@@ -293,7 +292,7 @@ void start_server(struct sockaddr_in server){
     size_t total_read = 0;
     while ((n = read(connfd, revline, MAXLINE - 1)) > 0) {
         
-            fprintf(stdout, "%s", revline);
+            //fprintf(stdout, "%s", revline);
 
 
                      /*ERROR HANDLING*/
@@ -350,7 +349,7 @@ void start_server(struct sockaddr_in server){
                     else if(req->type == REQUEST_DELETE){
                      
                         removeElementByUrl(req->url.start);
-                        write(connfd, SUCESS200, strlen(SUCESS200));
+                        write(connfd, SUCCESS200, strlen(SUCCESS200));
 
                 }
                     else if(req->type == REQUEST_GET){
@@ -369,7 +368,7 @@ void start_server(struct sockaddr_in server){
                             char* buff = malloc(sizeof(char) * (totalLength + 1));
                             
                             snprintf(buff,totalLength + 1,  res, dataLength, dataLength, n->data.start);
-                            printf("%s", buff);
+                            //printf("%s", buff);
                             write(connfd, buff, strlen(buff));
                             free(buff);
 
